@@ -38,6 +38,9 @@ setup(
             'pyroma = pint:run_pyroma',
          ],
       },
+    requires=[
+        'uncertainties',
+        ],
     license='BSD',
     classifiers=[
         'Development Status :: 4 - Beta',
