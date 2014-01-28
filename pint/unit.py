@@ -438,8 +438,17 @@ class UnitRegistry(object):
         #: non-multiplicative units as their *delta* counterparts.
         self.default_to_delta = default_to_delta
 
-        if filename == '':
-            data = pkg_resources.resource_filename(__name__, 'default_en.txt')
+        if filename == '':            
+            # HACK: The following is a work-around to allow pint to be used
+            # in scripts which are frozen into binary distributions by tools
+            # such as ``cx_freeze``. All pint resources in a frozen application
+            # will be expected to reside in the ``/pint`` sub-directory.
+            if hasattr(sys, "frozen"):
+                data = os.path.join(os.path.dirname(sys.executable), 
+                                    'pint' , 'default_en.txt')
+            else:
+                data = pkg_resources.resource_filename(__name__, 'default_en.txt')
+            # END HACK     
             self.load_definitions(data, True)
         elif filename is not None:
             self.load_definitions(filename)
@@ -661,8 +670,17 @@ class UnitRegistry(object):
             if not line or line.startswith('#'):
                 continue
             if line.startswith('@import'):
-                if is_resource:
-                    path = pkg_resources.resource_filename(__name__, line[7:].strip())
+                if is_resource:              
+                    # HACK: The following is a work-around to allow pint to be used
+                    # in scripts which are frozen into binary distributions by tools
+                    # such as ``cx_freeze``. All pint resources in a frozen application
+                    # will be expected to reside in the ``/pint`` sub-directory.
+                    if hasattr(sys, "frozen"):
+                        path = os.path.join(os.path.dirname(sys.executable), 
+                                            'pint' , line[7:].strip())
+                    else:
+                        path = pkg_resources.resource_filename(__name__, line[7:].strip())
+                    # END HACK                  
                 else:
                     try:
                         path = os.path.dirname(file.name)
